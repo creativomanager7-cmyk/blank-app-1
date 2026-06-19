@@ -13,7 +13,7 @@ st.write("Auditoría de metadatos, control de las 3 regalías y laboratorio de i
 
 tab1, tab2 = st.tabs(["📊 Auditoría de 3 Regalías (IP)", "🔥 Laboratorio de Versiones Espejo"])
 
-# Base de datos expandida con el estatus de las 3 regalías basadas en el video de la MLC/PROs
+# Base de datos con el estatus de las 3 regalías basadas en el video
 composiciones_data = {
     "Canción": [
         "Mi Debilidad", "La Bandida", "¿Dónde Estabas Tú?", "Despechada", "Amantes",
@@ -73,12 +73,12 @@ with tab1:
 
 with tab2:
     st.subheader("🔥 Laboratorio de Versiones Espejo (Hackeo de Hits)")
-    st.write("Toma una canción ganadora que ya está en la mente de la gente y reestrucutura su ADN para crear un éxito optimizado.")
+    st.write("Toma una canción ganadora que ya está en la mente de la gente y reestructura su ADN para crear un éxito optimizado.")
     
     col_ai1, col_ai2 = st.columns(2)
     with col_ai1:
         hit_original = st.text_input("Canción Éxito Base (Ej. Un Norteño o Regional Ganador):", "Ejemplo: Éxito de la Competencia")
-        tono_mod = st.slider("Modificación de Tonalidad Vocálica (Evitar Content ID / Adaptar a Artista):", -3, 3, 1, help="Sube o baja tonos para ajustar al rango de tu artista")
+        tono_mod = st.slider("Modificación de Tonalidad Vocálica:", -3, 3, 1)
     
     with col_ai2:
         estrategia_letra = st.selectbox("Estrategia de Letra Espejo:", [
@@ -89,6 +89,6 @@ with tab2:
         retencion_predicha = st.progress(92)
         st.caption("🔥 **Predicción de Retención Algorítmica:** Alta familiaridad cognitiva detectada (>90%).")
         
-    st.markdown("### 📝 Estructurador de Métricas de Silabas")
+    st.markdown("### 📝 Estructurador de Métricas de Sílabas")
     st.info("Mantiene la rima y el tempo exacto de la canción que ya sonó, pero cambia la narrativa lírica.")
     st.text_area("Inyectar Letra Original frente a Letra Espejo:", placeholder="Línea original: Si me ven llorando por tu amor...\nLínea espejo (Tu versión): Si te ven rogando por mi amor...")
