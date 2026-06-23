@@ -1,3 +1,6 @@
+import sys
+sys.modules['librosa'] = None
+sys.modules['scipy'] = None
 import streamlit as st
 import pandas as pd
 import random
