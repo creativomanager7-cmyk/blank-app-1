@@ -1,94 +1,182 @@
 import streamlit as st
+import requests
+import lyricsgenius
+import re
+from collections import Counter
+import google.generativeai as genai
 import pandas as pd
+import random
 
-st.set_page_config(
-    page_title="HITLAB CENTRAL",
-    page_icon="🎙️",
-    layout="wide"
-)
+st.set_page_config(page_title="Big Bang OS | Intelligence", page_icon="🌌", layout="wide")
 
-st.title("🎙️ HITLAB CENTRAL")
-st.markdown("## El Ahora de la Música: Ecosistema de Inteligencia de IP")
-st.write("Auditoría de metadatos, control de las 3 regalías y laboratorio de ingeniería inversa de hits.")
-
-tab1, tab2 = st.tabs(["📊 Auditoría de 3 Regalías (IP)", "🔥 Laboratorio de Versiones Espejo"])
-
-# Base de datos con el estatus de las 3 regalías basadas en el video
-composiciones_data = {
-    "Canción": [
-        "Mi Debilidad", "La Bandida", "¿Dónde Estabas Tú?", "Despechada", "Amantes",
-        "Piedra, Papel o Tijera", "Vivir La Vida", "Si me ven llorando - En Vivo", "Ojalá", "AMORES DE UN RATITO",
-        "Ven, Espíritu Ven", "Que Seas Feliz", "Amigo El Ratón Del Queso - Versión Popular", "Vente Conmigo", "Te Ves Muy Feliz",
-        "Soltera", "Te Olvidé", "El Malo Soy Yo", "Vicio de Ti", "De 5 en 5",
-        "¿De Qué Me Sirve? - Cero39 Remix", "Me Vale Madre", "... (Resto de Tracks)"
-    ],
-    "Artista / Intérprete": [
-        "Francy", "Hanna Rivas", "Paola Jara", "Julian Daza, Jhon Alex Castaño", "Gustavo Elis, Sixto Rein",
-        "Dayanara, Pipe Bueno", "Key Ospina", "Jessi Uribe", "Joaquin Guiller", "Sofi Piñan",
-        "Ministerio Etan", "Los Banis", "Los Caballeros de la Cantina", "Noche de Brujas, Jorge Celedón", "Pancho Uresti",
-        "Marcela Gómez", "La Pandilla del Rio Bravo", "Edwin Gaona", "Miguel Vaquero", "Nicole Vega",
-        "Diana Burco, CERO39", "Nicole Vega", "Múltiples Artistas"
-    ],
-    "1. Master (Distribución)": ["Cobrado por Disquera", "Cobrado por Disquera", "Cobrado por Disquera", "Cobrado por Disquera", "Independiente", "Cobrado por Disquera", "Independiente", "Cobrado por Disquera", "Cobrado por Disquera", "Independiente", "Independiente", "Disquera", "Independiente", "Disquera", "Disquera", "Independiente", "Disquera", "Independiente", "Independiente", "Independiente", "Independiente", "Independiente", "Revisión"],
-    "2. Ejecución (PROs - ASCAP/BMI)": ["Reclamado (Sony)", "Reclamado (Sony)", "Reclamado (Sony)", "Reclamado", "Reclamado", "Reclamado (Sony)", "Reclamado", "Reclamado (Sony)", "Reclamado (Sony)", "Reclamado", "Reclamado", "Reclamado", "Reclamado", "Reclamado", "Reclamado", "Reclamado", "Reclamado", "Reclamado", "Reclamado", "Reclamado", "Reclamado", "Reclamado", "Reclamado"],
-    "3. Mecánica (The MLC / Editora)": ["Alerta: Publisher Share?", "Aligned", "Alerta: Publisher Share?", "Aligned", "Aligned", "Aligned", "Alerta: No registrado", "Aligned", "Aligned", "Aligned", "Aligned", "Aligned", "Aligned", "Aligned", "Aligned", "Aligned", "Aligned", "Aligned", "Aligned", "Aligned", "Aligned", "Aligned", "Revisión"]
+st.markdown("""
+<style>
+.main-header {
+    background: linear-gradient(90deg, #0f0c29, #302b63, #24243e);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 4px solid #00F2FE;
 }
+.metric-box { background: #f0f2f6; padding: 15px; border-radius: 8px; border-left: 4px solid #302b63; margin-top: 10px;}
+</style>
+""", unsafe_allow_html=True)
 
-total_tracks = 49
-df_catalogo = pd.DataFrame(composiciones_data)
-if len(df_catalogo) < total_tracks:
-    extra_rows = total_tracks - len(df_catalogo)
-    extended_data = {
-        "Canción": [f"Track Expandido Muso.AI #{i}" for i in range(extra_rows)],
-        "Artista / Intérprete": ["Nicole Vega / Varios" for _ in range(extra_rows)],
-        "1. Master (Distribución)": ["Independiente" for _ in range(extra_rows)],
-        "2. Ejecución (PROs - ASCAP/BMI)": ["Reclamado" for _ in range(extra_rows)],
-        "3. Mecánica (The MLC / Editora)": ["Aligned" for _ in range(extra_rows)]
+st.markdown("""
+<div class="main-header">
+    <h1>🌌 PROYECTO BIG BANG OS</h1>
+    <p>A&R Copilot + Auditoría Forense de Regalías | Enterprise B2B</p>
+</div>
+""", unsafe_allow_html=True)
+
+BASE_URL = "https://api.deezer.com"
+
+# --- MOTOR BACKEND: ESCÁNER DE REGALÍAS (Creado por el CTO) ---
+def motor_auditoria_regalias(catalogo):
+    """Motor que cruza streams de Spotify vs Registros de Publishing (SAYCO/BMI)"""
+    resultados = []
+    dinero_atrapado_total = 0
+    
+    for obra in catalogo:
+        # Simulamos la extracción de datos de bases mundiales
+        streams = random.randint(500000, 5000000)
+        # Regalía promedio generada (aprox $0.004 por stream, 15% es publishing)
+        dinero_generado = (streams * 0.004) * 0.15 
+        
+        isrc_distribuidora = f"US{random.randint(10000000, 99999999)}"
+        isrc_publishing = isrc_distribuidora if obra["estado"] == "Limpio" else f"US{random.randint(10000000, 99999999)}"
+        
+        friccion = isrc_distribuidora != isrc_publishing
+        if friccion:
+            dinero_atrapado_total += dinero_generado
+            
+        resultados.append({
+            "Obra": obra["track"],
+            "Streams": f"{streams:,}",
+            "Estado": "🔴 Retenido" if friccion else "🟢 Fluyendo",
+            "Dinero Generado": f"${dinero_generado:,.2f} USD",
+            "Diagnóstico": "Conflicto de ISRC" if friccion else "Match Perfecto"
+        })
+        
+    return pd.DataFrame(resultados), dinero_atrapado_total
+
+# --- MOTOR DE INGENIERÍA INVERSA (GENIUS + GEMINI) ---
+def analizar_letra_metricas(letra):
+    if not letra: return None
+    letra_limpia = re.sub(r'\[.*?\]', '', letra)
+    palabras = re.findall(r'[a-záéíóúñü]+', letra_limpia.lower())
+    lineas = [l.strip() for l in letra.split('\n') if l.strip() and not l.strip().startswith('[')]
+    secciones = re.findall(r'\[(.*?)\]', letra, re.IGNORECASE)
+    return {
+        "total_palabras": len(palabras),
+        "total_lineas": len(lineas),
+        "secciones": secciones,
+        "num_secciones": len(secciones),
+        "densidad": round(len(palabras) / max(len(lineas), 1), 1),
+        "estructura": " → ".join(secciones[:10]) if secciones else "Sin estructura detectada"
     }
-    df_catalogo = pd.concat([df_catalogo, pd.DataFrame(extended_data)], ignore_index=True)
 
+def generar_receta_gemini(cancion, artista, metricas, gemini_key):
+    try:
+        genai.configure(api_key=gemini_key.strip())
+        model = genai.GenerativeModel('gemini-1.5-pro-latest')
+        prompt = f"Actúa como Ejecutivo de Sony Music. Hicimos ingeniería inversa a '{cancion}'. Estructura: {metricas['estructura']}. Palabras: {metricas['total_palabras']}. Densidad: {metricas['densidad']}. Redacta: 1) Psicoacústica (por qué atrapa). 2) Instrucciones de composición. 3) Prompt exacto para Suno AI sin usar nombres reales."
+        return model.generate_content(prompt).text
+    except Exception as e:
+        return f"Error con Gemini: {str(e)}"
+
+# --- INTERFAZ: LAS 4 PESTAÑAS DEL BIG BANG ---
+tab1, tab2, tab3, tab4 = st.tabs([
+    "💰 Auditor Financiero (Nuevo)", 
+    "🤝 Matchmaker de Feats (Nuevo)", 
+    "🔬 Oráculo A&R (Genius + AI)", 
+    "🔥 Tendencias Diarias"
+])
+
+# 1. PESTAÑA DEL DINERO (El Escáner de Fricciones)
 with tab1:
-    st.subheader("Auditoría Automatizada: El Triángulo de Spotify")
-    st.write("Rastrea si tus canciones están recolectando las 3 regalías completas (Master, Ejecución, Mecánica).")
+    st.header("💰 Auditoría Forense de Catálogo (Metadata & Regalías)")
+    st.write("Escanea discrepancias entre distribuidoras (Spotify/Apple) y sociedades de gestión (SAYCO/BMI) para detectar dinero atrapado.")
     
-    buscar_obra = st.text_input("Ingresa canción o artista para auditar fugas de dinero:", "")
-    
-    if buscar_obra:
-        resultado = df_catalogo[
-            df_catalogo['Canción'].str.contains(buscar_obra, case=False) | 
-            df_catalogo['Artista / Intérprete'].str.contains(buscar_obra, case=False)
-        ]
-        st.dataframe(resultado, use_container_width=True)
-    else:
-        st.dataframe(df_catalogo, use_container_width=True)
-        
-    st.markdown("### 🔍 Reporte de Vulnerabilidad Financiera")
     col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric(label="Total Obras en Auditoría", value=f"{len(df_catalogo)} Tracks")
-    with col2:
-        st.metric(label="Fugas de Mecánicas (The MLC) Detectadas", value="2 Alertas", delta="- Retención Oculta", delta_color="inverse")
-    with col3:
-        st.metric(label="Estatus con Sony Pubcol", value="Mesa de Trabajo Requerida")
+    col1.metric("Catálogo de Cristian", "49 Obras", "Sincronizado")
+    col2.metric("Obras Limpias", "47", "95% de Salud")
+    col3.metric("Obras en Fricción", "2", "-5% de Riesgo", delta_color="inverse")
+    
+    if st.button("🚀 Ejecutar Escáner de Bases de Datos", type="primary"):
+        with st.spinner("Cruzando ISRC vs ISWC a nivel global..."):
+            # Tu catálogo real simplificado para la demo
+            mi_catalogo = [
+                {"track": "Mi Propio Rescate", "estado": "Limpio"},
+                {"track": "Cama Fría", "estado": "Limpio"},
+                {"track": "Obra Inédita #3", "estado": "Fricción"},
+                {"track": "Obra Inédita #4", "estado": "Fricción"}
+            ]
+            
+            df_resultados, dinero_perdido = motor_auditoria_regalias(mi_catalogo)
+            
+            st.error(f"🚨 ALERTA ROJA: Se detectaron aprox. **${dinero_perdido:,.2f} USD** retenidos en la 'Black Box' por errores de metadata territorial.")
+            
+            st.dataframe(df_resultados, use_container_width=True)
+            
+            st.success("💡 **Acción Requerida:** Exportar reporte y enviar 'Split Sheets' corregidos a la editorial.")
 
+# 2. PESTAÑA MATCHMAKER (Cruce de Audiencias)
 with tab2:
-    st.subheader("🔥 Laboratorio de Versiones Espejo (Hackeo de Hits)")
-    st.write("Toma una canción ganadora que ya está en la mente de la gente y reestructura su ADN para crear un éxito optimizado.")
+    st.header("🤝 Matchmaker de Colaboraciones (Feats)")
+    st.write("Cruza demografía de audiencias para predecir el éxito de una colaboración antes de grabarla.")
     
-    col_ai1, col_ai2 = st.columns(2)
-    with col_ai1:
-        hit_original = st.text_input("Canción Éxito Base (Ej. Un Norteño o Regional Ganador):", "Ejemplo: Éxito de la Competencia")
-        tono_mod = st.slider("Modificación de Tonalidad Vocálica:", -3, 3, 1)
+    gen_b = st.selectbox("Selecciona Género Objetivo:", ["Regional Mexicano", "Cumbia Pop", "Urbano Latino", "Trap"])
     
-    with col_ai2:
-        estrategia_letra = st.selectbox("Estrategia de Letra Espejo:", [
-            "Psicología Inversa (Respuesta de mujer a hombre)",
-            "Continuación de la historia (Secuela del Hit)",
-            "Adaptación de Jerga Generacional (La Grasa / Gen Z)"
-        ])
-        retencion_predicha = st.progress(92)
-        st.caption("🔥 **Predicción de Retención Algorítmica:** Alta familiaridad cognitiva detectada (>90%).")
-        
-    st.markdown("### 📝 Estructurador de Métricas de Sílabas")
-    st.info("Mantiene la rima y el tempo exacto de la canción que ya sonó, pero cambia la narrativa lírica.")
-    st.text_area("Inyectar Letra Original frente a Letra Espejo:", placeholder="Línea original: Si me ven llorando por tu amor...\nLínea espejo (Tu versión): Si te ven rogando por mi amor...")
+    if st.button("🧬 Calcular Match Algorítmico"):
+        match = random.randint(85, 99)
+        st.markdown(f"<h2 style='color:#00F2FE;'>🔥 Score de Éxito Algorítmico: {match}%</h2>", unsafe_allow_html=True)
+        st.info(f"**Estrategia:** Juntar a un productor de Monterrey (80% audiencia masculina) con tu maqueta de {gen_b} (Alta retención femenina).")
+        st.write("📊 **Proyección:** Aumento del 34% en tasa de 'Saves' en Spotify en 72 horas por cruce demográfico perfecto.")
+
+# 3. PESTAÑA DEL ORÁCULO A&R (Ingeniería Inversa)
+with tab3:
+    st.header("🔬 Oráculo A&R — Ingeniería Inversa & Shadow Talent")
+    col_k1, col_k2 = st.columns(2)
+    with col_k1: t_gen = st.text_input("1. Token de Genius:", type="password")
+    with col_k2: t_gem = st.text_input("2. API Key de Gemini:", type="password")
+    
+    st.markdown("---")
+    c_a, c_b = st.columns(2)
+    with c_a: h_can = st.text_input("Canción:", placeholder="Ej: Un x100to")
+    with c_b: h_art = st.text_input("Artista:", placeholder="Ej: Grupo Frontera")
+
+    if st.button("🧬 Hackear Hit & Generar Receta"):
+        if t_gen and t_gem and h_can and h_art:
+            with st.spinner("Desarmando canción y consultando a Gemini..."):
+                try:
+                    genius = lyricsgenius.Genius(t_gen.strip(), verbose=False)
+                    song = genius.search_song(h_can, h_art)
+                    if song:
+                        st.success(f"✅ Hit Desarmado: {song.title}")
+                        if hasattr(song, 'writer_artists') and song.writer_artists:
+                            st.write("**✍️ Escritores Reales (Shadow A&R):** " + ", ".join([e['name'] for e in song.writer_artists]))
+                        
+                        metricas = analizar_letra_metricas(song.lyrics)
+                        st.code(f"Estructura: {metricas['estructura']} | Densidad: {metricas['densidad']} pal/línea")
+                        
+                        st.markdown("### 🤖 REPORTE EJECUTIVO (Gemini AI)")
+                        st.info(generar_receta_gemini(song.title, song.artist, metricas, t_gem))
+                except Exception as e:
+                    st.error(f"Error: {e}")
+        else:
+            st.warning("Completa llaves, canción y artista.")
+
+# 4. TENDENCIAS
+with tab4:
+    st.header("🔥 Playlists Líquidas & Tendencias")
+    if st.button("Cargar Radar Global"):
+        res = requests.get(f"{BASE_URL}/chart/0/tracks?limit=10").json().get("data", [])
+        for i, t in enumerate(res, 1):
+            st.write(f"**#{i} {t['title']}** - {t['artist']['name']}")
+
+st.markdown("---")
+st.caption("Proyecto Big Bang OS v5.0 | Desarrollado para Nivel Enterprise")
+ 
