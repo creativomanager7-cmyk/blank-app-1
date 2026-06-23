@@ -34,7 +34,6 @@ st.markdown("""
 
 # --- BASE DE DATOS ESTRATÉGICA REAL DE CRISTIAN ÁLVAREZ (49 TRACKS NÚCLEO) ---
 def cargar_inventario_real():
-    # Muestra de la estructura real auditada para el cruce de metadata
     data = {
         "Obra / Track": [
             "Amantes", 
@@ -58,20 +57,18 @@ def cargar_inventario_real():
     }
     return pd.DataFrame(data)
 
-# --- MOTOR GENERADOR DE PDF CORPORATIVO REAL ---
+# --- MOTOR PDF ---
 def crear_pdf_reporte_real(cancion, artista, escritores, metricas, reporte_ia):
     pdf = FPDF()
     pdf.add_page()
     
-    # Encabezado Corporativo
     pdf.set_font("Helvetica", "B", 16)
     pdf.set_text_color(15, 12, 41)
-    pdf.cell(0, 12, "PROYECTO BIG BANG OS - INFORME FORENSE", ln=1, align="C")
+    pdf.cell(0, 12, "PROYECTO BIG BANG OS - INFORME FORENCE", ln=1, align="C")
     pdf.set_font("Helvetica", "I", 10)
     pdf.cell(0, 6, f"Auditoría Unificada | Generado: {datetime.now().strftime('%d/%m/%Y')}", ln=1, align="C")
     pdf.ln(10)
     
-    # Ficha Técnica
     pdf.set_font("Helvetica", "B", 12)
     pdf.set_text_color(0, 0, 0)
     pdf.cell(0, 8, f"Track Analizado: {cancion}", ln=1)
@@ -79,7 +76,6 @@ def crear_pdf_reporte_real(cancion, artista, escritores, metricas, reporte_ia):
     pdf.cell(0, 8, f"Créditos de Autoría Detectados: {escritores}", ln=1)
     pdf.ln(5)
     
-    # Métricas
     pdf.cell(0, 8, "ANÁLISIS DE METADATA Y MATEMÁTICA ESTRUCTURAL", ln=1)
     pdf.set_font("Helvetica", "", 10)
     pdf.cell(0, 6, f"- Total palabras en lírica: {metricas['total_palabras']}", ln=1)
@@ -87,14 +83,12 @@ def crear_pdf_reporte_real(cancion, artista, escritores, metricas, reporte_ia):
     pdf.cell(0, 6, f"- Densidad del track: {metricas['densidad']} pal/línea", ln=1)
     pdf.ln(5)
     
-    # Diagnóstico IA
     pdf.set_font("Helvetica", "B", 12)
     pdf.cell(0, 8, "DIAGNÓSTICO ESTRATÉGICO DIRECTIVO (GEMINI AI)", ln=1)
     pdf.set_font("Helvetica", "", 9)
     reporte_limpio = reporte_ia.encode('latin-1', 'replace').decode('latin-1')
     pdf.multi_cell(0, 5, reporte_limpio)
     
-    # Footer
     pdf.set_y(-15)
     pdf.set_font("Helvetica", "I", 8)
     pdf.cell(0, 10, "Propiedad Intelectual de Cristian Álvarez | Confidencial Enterprise", align="C")
@@ -133,7 +127,6 @@ with tab1:
     st.header("💰 Panel Integrado de Control de Catálogo")
     st.write("Estado de explotación en vivo de tus 49 tracks principales cruzando Master, Ejecución y Mecánica.")
     
-    # KPIs reales basados en tu estatus actual
     c1, c2, c3 = st.columns(3)
     c1.metric("Tracks Totales Protegidos", "49", "Sincronizados en Bóveda")
     c2.metric("Alertas Críticas de Metadata", "2", "Publisher Share Pendiente", delta_color="inverse")
@@ -144,7 +137,7 @@ with tab1:
     st.dataframe(df_inventario, use_container_width=True)
     
     st.markdown("---")
-    st.write("⚙️ **Carga Forense Directa:** Si tienes el reporte crudo de distribución de la disquera (`2026-06-23T03-09_export.csv`), puedes arrastrarlo aquí para auditar discrepancias externas en caliente:")
+    st.write("⚙️ **Carga Forense Directa:** Si tienes el reporte crudo de distribución de la disquera, puedes arrastrarlo aquí para auditar discrepancias externas en caliente:")
     archivo_externo = st.file_uploader("Subir archivo de verificación externa (CSV/Excel)", type=["csv", "xlsx"])
     if archivo_externo is not None:
         st.success("✅ Archivo indexado con éxito. Procesando contra matriz base de 49 tracks...")
@@ -169,7 +162,6 @@ with tab2:
                     genius = lyricsgenius.Genius(t_gen.strip(), verbose=False)
                     song = genius.search_song(h_can, h_art)
                     
-                    # Si no encuentra lírica exacta por ser una obra muy específica, el sistema no se rompe y usa metadatos locales
                     titulo_final = song.title if song else h_can
                     artista_final = song.artist if song else h_art
                     letra_final = song.lyrics if song else "[Sección] Datos locales unificados."
@@ -185,7 +177,6 @@ with tab2:
                     reporte = generar_receta_gemini(titulo_final, artista_final, metricas, t_gem)
                     st.info(reporte)
                     
-                    # --- BOTÓN DE COMPILACIÓN PDF REAL ---
                     st.markdown("---")
                     pdf_bytes = crear_pdf_reporte_real(titulo_final, artista_final, escritores_texto, metricas, reporte)
                     st.download_button(
@@ -212,7 +203,7 @@ with tab3:
         **Para:** Departamento de Operaciones y Catálogo - Sony Music Publishing  
         **De:** Cristian Alexander Alvarez Cortez  
         
-        Por medio de la presente, se solicita formalmente la apertura de la **Mesa de Trabajo Técnica** para corregir las inconsistencias de registro territorial en la regalía **Mecánica** (The MLC) y la reconciliación de los siguientes códigos:
+        Por medio de la presente, se solicita formalmente la apertura de la **Mesa de Trabajo Técnica** para corregir las inconsistencies de registro territorial en la regalía **Mecánica** (The MLC) y la reconciliación de los siguientes códigos:
         
         1. **Amantes** - Reconciliación de créditos cruzados con coautores independientes. Solicitud de enganche de contrato inmediato.
         2. **Mi Debilidad / ¿Dónde Estabas Tú?** - Corrección de alerta de *Publisher Share?* retenido en cuentas globales.
