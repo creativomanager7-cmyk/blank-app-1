@@ -73,14 +73,12 @@ def cargar_inventario_real():
     for i, cancion in enumerate(canciones):
         artista = artistas[i]
         
-        # Generación de códigos e identificadores simulados en base al catálogo real
         codigos_isrc.append(f"CO-SMP-{26:02d}-{i+1001:04d}")
         
-        # Enlace de búsqueda directa en Google (apunta a Spotify/YouTube de forma interactiva)
+        # Enlace en formato Markdown estándar para tablas limpias de Streamlit
         query_limpio = f"{cancion} {artista} spotify".replace(" ", "+")
-        links_verificacion.append(f"https://www.google.com/search?q={query_limpio}")
+        links_verificacion.append(f"[🔗 Buscar en Tiendas](https://www.google.com/search?q={query_limpio})")
         
-        # Configuración analítica basada en tus especificaciones precisas
         if cancion == "Mi Debilidad" and artista == "Francy":
             ejecucion_status.append("🔴 Conflicto de Reclamación")
             mecanica_status.append("🚨 Alerta: Publisher Share?")
@@ -120,7 +118,7 @@ def cargar_inventario_real():
         "Ejecución (SAYCO/Sony)": ejecucion_status,
         "Mecánica (The MLC/Editora)": mecanica_status,
         "Estatus Sony Pubcol": sony_status,
-        "Ruta Digital (Clic para Ver)": links_verificacion
+        "Ruta Digital Directa": links_verificacion
     }
     return pd.DataFrame(data)
 
@@ -202,22 +200,8 @@ with tab1:
     st.markdown("### 🧬 Matriz B2B Real de Fricción e Identidad de Regalías")
     df_inventario = cargar_inventario_real()
     
-    # AQUÍ ACTIVAMOS LA CONFIGURACIÓN DE ENLACES CLIQUEABLES DIRECTOS
-    st.data_editor(
-        df_inventario, 
-        use_container_width=True, 
-        height=900,
-        column_config={
-            "Ruta Digital (Clic para Ver)": st.column_config.LinkColumn(
-                "Ruta Digital (Clic para Ver)",
-                help="Haz clic directo para verificar metadatos en las tiendas",
-                validate="^http",
-                max_chars=100,
-                display_text="🌐 Abrir Verificación"
-            )
-        },
-        disabled=True
-    )
+    # Renderizado en formato HTML plano para que los links funcionen al 100% nativos
+    st.write(df_inventario.to_html(escape=False, index=False), unsafe_allow_html=True)
     
     st.markdown("---")
     st.write("⚙️ **Carga Forense Directa:** Si tienes el reporte crudo de distribución de la disquera, puedes arrastrarlo aquí para auditar discrepancias externas en caliente:")
