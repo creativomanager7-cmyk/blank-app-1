@@ -35,11 +35,11 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
     .track-card {
-        background: #15142C;
-        padding: 25px;
+        background: #121124;
+        padding: 20px;
         border-radius: 14px;
-        margin-bottom: 15px;
         border: 1px solid #23214A;
+        margin-bottom: 10px;
     }
     .badge-green { background: #065F46; color: #34D399; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
     .badge-red { background: #7F1D1D; color: #FCA5A5; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
@@ -54,7 +54,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- BASE DE DATOS ESTRATÉGICA DE CRISTIAN ÁLVAREZ ---
+# --- BASE DE DATOS REAL DE CRISTIAN ÁLVAREZ ---
 canciones = [
     "Amigo ratón del queso", "Borracho te llamo", "De qué me sirve", "La bandida",
     "El agropecuario", "Te olvide", "Masoquista", "Delito", "Princeso", "Que resuelva",
@@ -82,7 +82,6 @@ artistas = [
     "Santiago Velásquez", "Francy", "Paola Jara"
 ]
 
-# --- MENÚ DE CONTROL UNIFICADO ---
 tab1, tab2, tab3 = st.tabs([
     "📊 Bóveda de Control Forense", "🔬 Oráculo Inteligente A&R", "🤝 Mesa de Negociación Sony"
 ])
@@ -127,37 +126,44 @@ with tab1:
             mec_b = '<span class="badge-green">🟢 Aligned</span>'
             say_b = "✅ Sincronizado Completamente"
             
-        with st.container():
+        # Diseño Estructural Con Carátula Optimizada (Fila por Canción)
+        st.markdown(f'<div class="track-card">', unsafe_allow_html=True)
+        
+        c_img, c_info, c_alerts = st.columns([1, 4, 4])
+        
+        with c_img:
+            # Placeholder Estético de Carátula (Disco de vinilo / Álbum VIP)
+            st.image("https://images.unsplash.com/photo-1539635278303-d4002c07eae3?q=80&w=200&auto=format&fit=crop", use_container_width=True)
+            
+        with c_info:
             st.markdown(f"""
-            <div class="track-card" style="margin-bottom: 5px;">
-                <table style="width:100%; border:none; background:transparent;">
-                    <tr style="background:transparent; border:none;">
-                        <td style="width:40%; border:none; vertical-align:top;">
-                            <h4 style="color:#00F2FE; margin:0; font-size:20px;">{cancion}</h4>
-                            <p style="color:#94A3B8; margin:5px 0 0 0; font-size:14px;">🎙️ Artista: <b>{artista}</b></p>
-                            <p style="color:#64748B; margin:2px 0 0 0; font-size:11px;">🆔 ISRC: {isrc}</p>
-                        </td>
-                        <td style="width:60%; border:none; vertical-align:top; font-size:13px;">
-                            <div style="margin-bottom:4px;"><b>Ejecución:</b> {exe_b}</div>
-                            <div style="margin-bottom:4px;"><b>Mecánica:</b> {mec_b}</div>
-                            <div><b>SAYCO Recaudo:</b> <span style="color:#E2E8F0;">{say_b}</span></div>
-                        </td>
-                    </tr>
-                </table>
+            <h4 style="color:#00F2FE; margin:0; font-size:20px;">{cancion}</h4>
+            <p style="color:#94A3B8; margin:5px 0 0 0; font-size:14px;">🎙️ Artista: <b>{artista}</b></p>
+            <p style="color:#64748B; margin:2px 0 0 0; font-size:11px;">🆔 ISRC: {isrc}</p>
+            """, unsafe_allow_html=True)
+            
+        with c_alerts:
+            st.markdown(f"""
+            <div style="font-size:13px; margin-top:5px;">
+                <div style="margin-bottom:4px;"><b>Ejecución:</b> {exe_b}</div>
+                <div style="margin-bottom:4px;"><b>Mecánica:</b> {mec_b}</div>
+                <div><b>SAYCO:</b> <span style="color:#94A3B8;">{say_b}</span></div>
             </div>
             """, unsafe_allow_html=True)
             
-            # Botones Corporativos con Iconografía de Identidad Integrada
-            c_btn1, c_btn2, _ = st.columns([1, 1, 2])
-            with c_btn1:
-                st.link_button("🟩 Spotify Audit", f"https://open.spotify.com/search/{cancion.replace(' ', '%20')}%20{artista.replace(' ', '%20')}", use_container_width=True)
-            with c_btn2:
-                st.link_button("🟥 YouTube Video", f"https://www.youtube.com/results?search_query={cancion.replace(' ', '+')}+{artista.replace(' ', '+')}", use_container_width=True)
-            st.markdown("<div style='margin-bottom:20px;'></div>", unsafe_allow_html=True)
+        # Fila de Botones Nativos de Verificación Segura e Interactivos
+        st.markdown("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+        c_btn1, c_btn2, _ = st.columns([1.5, 1.5, 5])
+        with c_btn1:
+            st.link_button("🟩 Spotify Audit", f"https://open.spotify.com/search/{cancion.replace(' ', '%20')}%20{artista.replace(' ', '%20')}", use_container_width=True)
+        with c_btn2:
+            st.link_button("🟥 YouTube Video", f"https://www.youtube.com/results?search_query={cancion.replace(' ', '+')}+{artista.replace(' ', '+')}", use_container_width=True)
+            
+        st.markdown('</div>', unsafe_allow_html=True)
 
 with tab2:
     st.header("🔬 Oráculo A&R e Ingeniería de Catálogo")
-    st.info("Ingresa tus llaves operacionales para desplegar la transcripción analítica.")
+    st.info("Ingresa tus llaves operacionales en la terminal para habilitar auditorías profundas.")
 
 with tab3:
     st.header("🤝 Estrategia para Mesa de Trabajo (Sony Music Publishing)")
