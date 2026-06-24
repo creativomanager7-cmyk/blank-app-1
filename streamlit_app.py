@@ -11,50 +11,69 @@ from datetime import datetime
 
 st.set_page_config(page_title="Big Bang OS | Enterprise", page_icon="🌌", layout="wide")
 
-# --- MAQUETACIÓN ESTÉTICA DE ALTA GAMA (DARK VIP INTERFACE) ---
+# --- INTERFAZ PREMIUM INSPIRADA EN MUSO.AI (DARK FORENSIC STYLE) ---
 st.markdown("""
 <style>
     html, body, [data-testid="stAppViewContainer"] {
-        background-color: #080711 !important;
-        color: #E2E8F0 !important;
+        background-color: #0B0A16 !important;
+        color: #F1F5F9 !important;
     }
     .main-header {
-        background: linear-gradient(135deg, #1E1B4B 0%, #311042 100%);
-        padding: 35px;
+        background: linear-gradient(135deg, #13112C 0%, #1E1233 100%);
+        padding: 40px;
         border-radius: 16px;
         text-align: center;
-        margin-bottom: 30px;
-        border: 1px solid #4338CA;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        margin-bottom: 35px;
+        border: 1px solid #2A2461;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.6);
     }
     .kpi-card {
-        background: #111022;
-        padding: 20px;
+        background: #141230;
+        padding: 22px;
         border-radius: 12px;
-        border-left: 5px solid #06B6D4;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        border-bottom: 4px solid #00F2FE;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     }
-    .track-card {
-        background: #121124;
-        padding: 20px;
+    .muso-row {
+        background: #121026;
+        padding: 20px 25px;
         border-radius: 14px;
-        border: 1px solid #23214A;
-        margin-bottom: 10px;
+        border: 1px solid #1E1B4B;
+        margin-bottom: 5px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
-    .badge-green { background: #065F46; color: #34D399; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-    .badge-red { background: #7F1D1D; color: #FCA5A5; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-    .badge-yellow { background: #78350F; color: #FCD34D; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+    .muso-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #00F2FE;
+    }
+    .role-badge {
+        background: linear-gradient(90deg, #1E1B4B, #311042);
+        color: #00F2FE;
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: bold;
+        border: 1px solid #4338CA;
+        display: inline-block;
+        margin-top: 5px;
+    }
+    .badge-green { background: #065F46; color: #34D399; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+    .badge-red { background: #7F1D1D; color: #FCA5A5; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+    .badge-yellow { background: #78350F; color: #FCD34D; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="main-header">
-    <h1 style="color: #00F2FE; font-size: 42px; margin-bottom: 5px; font-family: 'Helvetica Neue', sans-serif;">🌌 BIG BANG OS</h1>
-    <p style="color: #94A3B8; font-size: 18px; letter-spacing: 1px;">A&R Copilot & Digital Royalty Forensic Suite • B2B Enterprise</p>
+    <h1 style="color: #00F2FE; font-size: 45px; margin-bottom: 5px; font-family: 'Helvetica Neue', sans-serif; font-weight: 800;">🌌 BIG BANG OS</h1>
+    <p style="color: #94A3B8; font-size: 18px; letter-spacing: 1px;">A&R Copilot & Analytics Credit Registry • Powered by Muso Insights</p>
 </div>
 """, unsafe_allow_html=True)
 
-# --- BASE DE DATOS REAL DE CRISTIAN ÁLVAREZ ---
+# --- REPERTORIO UNIFICADO DE CRISTIAN ÁLVAREZ ---
 canciones = [
     "Amigo ratón del queso", "Borracho te llamo", "De qué me sirve", "La bandida",
     "El agropecuario", "Te olvide", "Masoquista", "Delito", "Princeso", "Que resuelva",
@@ -83,87 +102,81 @@ artistas = [
 ]
 
 tab1, tab2, tab3 = st.tabs([
-    "📊 Bóveda de Control Forense", "🔬 Oráculo Inteligente A&R", "🤝 Mesa de Negociación Sony"
+    "📊 Bóveda Forense Estilo Muso.AI", "🔬 Oráculo Inteligente A&R", "🤝 Mesa de Negociación Sony"
 ])
 
 with tab1:
     col_a, col_b, col_c = st.columns(3)
     with col_a:
-        st.markdown('<div class="kpi-card"><p style="color:#94A3B8; margin:0;">Tracks Protegidos</p><h2 style="color:#00F2FE; margin:0;">47 Works</h2></div>', unsafe_allow_html=True)
+        st.markdown('<div class="kpi-card"><p style="color:#94A3B8; margin:0;">Catalog Works</p><h2 style="color:#00F2FE; margin:0; font-weight:700;">47 Tracks</h2></div>', unsafe_allow_html=True)
     with col_b:
-        st.markdown('<div class="kpi-card" style="border-left-color:#F59E0B;"><p style="color:#94A3B8; margin:0;">Alertas en Caja Negra</p><h2 style="color:#F59E0B; margin:0;">21 Fricciones</h2></div>', unsafe_allow_html=True)
+        st.markdown('<div class="kpi-card" style="border-bottom-color:#F59E0B;"><p style="color:#94A3B8; margin:0;">Black Box Alertas</p><h2 style="color:#F59E0B; margin:0; font-weight:700;">21 Conflicts</h2></div>', unsafe_allow_html=True)
     with col_c:
-        st.markdown('<div class="kpi-card" style="border-left-color:#EF4444;"><p style="color:#94A3B8; margin:0;">Estatus General</p><h2 style="color:#EF4444; margin:0;">Mesa de Trabajo</h2></div>', unsafe_allow_html=True)
+        st.markdown('<div class="kpi-card" style="border-bottom-color:#EF4444;"><p style="color:#94A3B8; margin:0;">Auditoría Status</p><h2 style="color:#EF4444; margin:0; font-weight:700;">Mesa Activa</h2></div>', unsafe_allow_html=True)
         
-    st.markdown("<br><h3 style='color:#6366F1;'>🧬 Despliegue de Control Territorial Estructural</h3>", unsafe_allow_html=True)
+    st.markdown("<br><h3 style='color:#6366F1; font-family:sans-serif;'>🎵 Tracklist Verified Master & Publishing Credits</h3>", unsafe_allow_html=True)
     
     for i, cancion in enumerate(canciones):
         artista = artistas[i]
         isrc = f"CO-SMP-26-{i+1001:04d}"
         
+        # Clasificación forense territorial
         if cancion == "Mi Debilidad" and artista == "Francy":
-            exe_b = '<span class="badge-red">🔴 Conflicto de Reclamación</span>'
-            mec_b = '<span class="badge-yellow">🚨 Publisher Share Volátil</span>'
-            say_b = "⚠️ Retención Directa por Coautorías"
+            exe_b = '<span class="badge-red">🔴 Reclamación Duplicada</span>'
+            mec_b = '<span class="badge-yellow">🚨 Publisher Split Volátil</span>'
+            status_texto = "⚠️ Retención SAYCO"
         elif cancion == "¿Dónde Estabas Tú?" and artista == "Paola Jara":
-            exe_b = '<span class="badge-red">🔴 Conflicto de Reclamación</span>'
-            mec_b = '<span class="badge-red">🔴 Retenido Territorial</span>'
-            say_b = "❌ Fondos Congelados en Caja Negra"
+            exe_b = '<span class="badge-red">🔴 Conflicto Activo</span>'
+            mec_b = '<span class="badge-red">🔴 Retenido The MLC (US)</span>'
+            status_texto = "❌ Fondos Caja Negra"
         elif cancion == "Amores de un ratico" and artista == "Sofi Piñan":
             exe_b = '<span class="badge-green">🟢 Reclamado</span>'
-            mec_b = '<span class="badge-yellow">🚨 Alerta: Publisher Share?</span>'
-            say_b = "⚠️ Pendiente Conciliación"
-        elif cancion == "La bandida" and artista == "Hanna Rivas":
-            exe_b = '<span class="badge-green">🟢 Reclamado</span>'
-            mec_b = '<span class="badge-green">🟢 Aligned</span>'
-            say_b = "✅ Liquidado Estricto"
-        elif "Nicol Vega" in artista or "Joaquin Guiller" in artista or "Jhon Alex" in artista:
-            exe_b = '<span class="badge-green">🟢 Reclamado</span>'
-            mec_b = '<span class="badge-yellow">🚨 Alerta: Verificar Historial</span>'
-            say_b = "⚠️ Auditoría de Distribución Activa"
+            mec_b = '<span class="badge-yellow">🚨 Alerta Split Share</span>'
+            status_texto = "⚠️ Pendiente Conciliación"
         else:
-            exe_b = '<span class="badge-green">🟢 Reclamado</span>'
+            exe_b = '<span class="badge-green">🟢 Al Día</span>'
             mec_b = '<span class="badge-green">🟢 Aligned</span>'
-            say_b = "✅ Sincronizado Completamente"
+            status_texto = "✅ Sincronizado"
             
-        # Diseño Estructural Con Carátula Optimizada (Fila por Canción)
-        st.markdown(f'<div class="track-card">', unsafe_allow_html=True)
-        
-        c_img, c_info, c_alerts = st.columns([1, 4, 4])
-        
-        with c_img:
-            # Placeholder Estético de Carátula (Disco de vinilo / Álbum VIP)
-            st.image("https://images.unsplash.com/photo-1539635278303-d4002c07eae3?q=80&w=200&auto=format&fit=crop", use_container_width=True)
-            
-        with c_info:
-            st.markdown(f"""
-            <h4 style="color:#00F2FE; margin:0; font-size:20px;">{cancion}</h4>
-            <p style="color:#94A3B8; margin:5px 0 0 0; font-size:14px;">🎙️ Artista: <b>{artista}</b></p>
-            <p style="color:#64748B; margin:2px 0 0 0; font-size:11px;">🆔 ISRC: {isrc}</p>
-            """, unsafe_allow_html=True)
-            
-        with c_alerts:
-            st.markdown(f"""
-            <div style="font-size:13px; margin-top:5px;">
-                <div style="margin-bottom:4px;"><b>Ejecución:</b> {exe_b}</div>
-                <div style="margin-bottom:4px;"><b>Mecánica:</b> {mec_b}</div>
-                <div><b>SAYCO:</b> <span style="color:#94A3B8;">{say_b}</span></div>
+        # Contenedor HTML Estilo Ficha de Muso.AI
+        st.markdown(f"""
+        <div class="muso-row">
+            <div style="display: flex; align-items: center; width: 100%;">
+                <div style="width: 10%; text-align: left;">
+                    <img class="muso-avatar" src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=150&auto=format&fit=crop">
+                </div>
+                <div style="width: 30%;">
+                    <h4 style="color:#00F2FE; margin:0; font-size:19px; font-weight:600;">{cancion}</h4>
+                    <p style="color:#94A3B8; margin:3px 0 0 0; font-size:13px;">🎙️ {artista}</p>
+                    <span class="role-badge">✍️ Writer / Publisher</span>
+                </div>
+                <div style="width: 35%; font-size: 12px; border-left: 1px solid #23214A; padding-left: 20px;">
+                    <div style="margin-bottom:3px;"><b>Performance:</b> {exe_b}</div>
+                    <div style="margin-bottom:3px;"><b>Mechanical:</b> {mec_b}</div>
+                    <div><b>Local Rights:</b> <span style="color:#94A3B8;">{status_texto}</span></div>
+                </div>
+                <div style="width: 25%; text-align: right; color: #64748B; font-size: 11px;">
+                    <b>ISRC CODE</b><br><span style="color:#E2E8F0; font-family:monospace;">{isrc}</span>
+                </div>
             </div>
-            """, unsafe_allow_html=True)
-            
-        # Fila de Botones Nativos de Verificación Segura e Interactivos
-        st.markdown("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
-        c_btn1, c_btn2, _ = st.columns([1.5, 1.5, 5])
-        with c_btn1:
-            st.link_button("🟩 Spotify Audit", f"https://open.spotify.com/search/{cancion.replace(' ', '%20')}%20{artista.replace(' ', '%20')}", use_container_width=True)
-        with c_btn2:
-            st.link_button("🟥 YouTube Video", f"https://www.youtube.com/results?search_query={cancion.replace(' ', '+')}+{artista.replace(' ', '+')}", use_container_width=True)
-            
-        st.markdown('</div>', unsafe_allow_html=True)
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Bloque de Control de Audio y Botones Integrados
+        c_player, c_b1, c_b2 = st.columns([5, 2, 2])
+        with c_player:
+            # Reproductor de audio integrado nativo para simular streaming en vivo
+            st.audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", format="audio/mp3")
+        with c_b1:
+            st.link_button("🟩 Spotify Market", f"https://open.spotify.com/search/{cancion.replace(' ', '%20')}%20{artista.replace(' ', '%20')}", use_container_width=True)
+        with c_b2:
+            st.link_button("🟥 YouTube Monitor", f"https://www.youtube.com/results?search_query={cancion.replace(' ', '+')}+{artista.replace(' ', '+')}", use_container_width=True)
+        
+        st.markdown("<div style='margin-bottom:15px; border-bottom: 1px solid #161432;'></div>", unsafe_allow_html=True)
 
 with tab2:
     st.header("🔬 Oráculo A&R e Ingeniería de Catálogo")
-    st.info("Ingresa tus llaves operacionales en la terminal para habilitar auditorías profundas.")
+    st.info("Terminal lista para análisis lírico y generación de PDFs ejecutivos.")
 
 with tab3:
     st.header("🤝 Estrategia para Mesa de Trabajo (Sony Music Publishing)")
