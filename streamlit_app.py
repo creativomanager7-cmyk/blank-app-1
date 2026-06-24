@@ -137,7 +137,9 @@ with tab1:
     
     st.markdown("### 🧬 Matriz Real de Fricción de Regalías")
     df_inventario = cargar_inventario_real()
-    st.dataframe(df_inventario, use_container_width=True)
+    
+    # MODIFICACIÓN DE TAMAÑO AUTOMÁTICO REALIZADA AQUÍ (height=800)
+    st.dataframe(df_inventario, use_container_width=True, height=800)
     
     st.markdown("---")
     st.write("⚙️ **Carga Forense Directa:** Si tienes el reporte crudo de distribución de la disquera, puedes arrastrarlo aquí para auditar discrepancias externas en caliente:")
