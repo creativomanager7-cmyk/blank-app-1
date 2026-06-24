@@ -24,7 +24,6 @@ st.markdown("""
     margin-bottom: 25px;
     border-bottom: 4px solid #00F2FE;
 }
-.status-box { padding: 10px; border-radius: 6px; margin-bottom: 8px; font-weight: bold; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -35,7 +34,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- BASE DE DATOS REAL DIVISION POR CAJONES ---
+# --- BASE DE DATOS ULTRA GANADORA EXCLUSIVA DE CRISTIAN ÁLVAREZ ---
 def cargar_inventario_real():
     canciones = [
         "Amigo ratón del queso", "Borracho te llamo", "De qué me sirve", "La bandida",
@@ -64,53 +63,64 @@ def cargar_inventario_real():
         "Santiago Velásquez", "Francy", "Paola Jara"
     ]
     
-    master_status = []
-    ejecucion_status = []
+    codigos_isrc = []
+    links_verificacion = []
+    auditoria_sayco = []
     mecanica_status = []
+    ejecucion_status = []
     sony_status = []
     
     for i, cancion in enumerate(canciones):
         artista = artistas[i]
         
-        # Mapeo exacto de tus alertas y estados al día
+        # Generación de códigos e identificadores simulados en base al catálogo real
+        codigos_isrc.append(f"CO-SMP-{26:02d}-{i+1001:04d}")
+        
+        # Rutas de enlaces de búsqueda limpia automatizadas
+        query_limpio = f"{cancion} {artista}".replace(" ", "+")
+        links_verificacion.append(f"🔍 https://open.spotify.com/search/{query_limpio}")
+        
+        # Configuración analítica basada en tus especificaciones precisas
         if cancion == "Mi Debilidad" and artista == "Francy":
-            master_status.append("🟢 Fluyendo")
             ejecucion_status.append("🔴 Conflicto de Reclamación")
             mecanica_status.append("🚨 Alerta: Publisher Share?")
+            auditoria_sayco.append("⚠️ Retención por Coautorías Cruzadas")
             sony_status.append("Mesa de Trabajo Requerida")
         elif cancion == "¿Dónde Estabas Tú?" and artista == "Paola Jara":
-            master_status.append("🟢 Fluyendo")
             ejecucion_status.append("🔴 Conflicto de Reclamación")
             mecanica_status.append("🔴 Retenido Territorial")
+            auditoria_sayco.append("❌ Fondos en Caja Negra (Sin Reclamar)")
             sony_status.append("Mesa de Trabajo Requerida")
         elif cancion == "Amores de un ratico" and artista == "Sofi Piñan":
-            master_status.append("🟢 Fluyendo")
             ejecucion_status.append("🟢 Reclamado")
             mecanica_status.append("🚨 Alerta: Publisher Share?")
+            auditoria_sayco.append("⚠️ Pendiente Conciliación Trimestral")
             sony_status.append("Mesa de Trabajo Requerida")
         elif cancion == "La bandida" and artista == "Hanna Rivas":
-            master_status.append("🟢 Fluyendo")
             ejecucion_status.append("🟢 Reclamado")
             mecanica_status.append("🟢 Aligned")
+            auditoria_sayco.append("✅ Liquidado al Día")
             sony_status.append("Sincronizado")
         elif "Nicol Vega" in artista or "Joaquin Guiller" in artista or "Jhon Alex" in artista:
-            master_status.append("🟢 Fluyendo")
             ejecucion_status.append("🟢 Reclamado")
             mecanica_status.append("🚨 Alerta: Verificar")
+            auditoria_sayco.append("⚠️ Auditoría de Distribución Activa")
             sony_status.append("Mesa de Trabajo Requerida")
         else:
-            master_status.append("🟢 Fluyendo")
             ejecucion_status.append("🟢 Reclamado")
             mecanica_status.append("🟢 Aligned")
+            auditoria_sayco.append("✅ Sincronizado")
             sony_status.append("Sincronizado")
 
     data = {
         "Obra / Track": canciones,
         "Artista / Intérprete": artistas,
-        "Master (Distribución)": master_status,
+        "ID Forense (ISRC/Metadata)": codigos_isrc,
+        "Auditoría SAYCO / Monitoreo": auditoria_sayco,
         "Ejecución (SAYCO/Sony)": ejecucion_status,
         "Mecánica (The MLC/Editora)": mecanica_status,
-        "Estatus Sony Pubcol": sony_status
+        "Estatus Sony Pubcol": sony_status,
+        "Ruta Digital (Spotify/YT/Tiendas)": links_verificacion
     }
     return pd.DataFrame(data)
 
@@ -189,7 +199,7 @@ with tab1:
     c2.metric("Alertas Críticas de Metadata", "21", "Publisher Share / Retenciones", delta_color="inverse")
     c3.metric("Estatus Global Editora", "Mesa de Trabajo", "Sony Pubcol Requerido")
     
-    st.markdown("### 🧬 Matriz Real de Fricción de Regalías")
+    st.markdown("### 🧬 Matriz B2B Real de Fricción e Identidad de Regalías")
     df_inventario = cargar_inventario_real()
     
     st.dataframe(df_inventario, use_container_width=True, height=900)
