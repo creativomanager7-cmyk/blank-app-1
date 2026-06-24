@@ -3,7 +3,6 @@ sys.modules['librosa'] = None
 sys.modules['scipy'] = None
 import streamlit as st
 import pandas as pd
-import random
 import re
 import google.generativeai as genai
 import lyricsgenius
@@ -12,269 +11,155 @@ from datetime import datetime
 
 st.set_page_config(page_title="Big Bang OS | Enterprise", page_icon="🌌", layout="wide")
 
-# Estilos visuales de nivel corporativo
+# --- MAQUETACIÓN ESTÉTICA DE ALTA GAMA (DARK VIP INTERFACE) ---
 st.markdown("""
 <style>
-.main-header {
-    background: linear-gradient(90deg, #0f0c29, #302b63, #24243e);
-    color: white;
-    padding: 25px;
-    border-radius: 12px;
-    text-align: center;
-    margin-bottom: 25px;
-    border-bottom: 4px solid #00F2FE;
-}
+    html, body, [data-testid="stAppViewContainer"] {
+        background-color: #080711 !important;
+        color: #E2E8F0 !important;
+    }
+    .main-header {
+        background: linear-gradient(135deg, #1E1B4B 0%, #311042 100%);
+        padding: 35px;
+        border-radius: 16px;
+        text-align: center;
+        margin-bottom: 30px;
+        border: 1px solid #4338CA;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .kpi-card {
+        background: #111022;
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 5px solid #06B6D4;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .track-card {
+        background: #15142C;
+        padding: 25px;
+        border-radius: 14px;
+        margin-bottom: 15px;
+        border: 1px solid #23214A;
+    }
+    .badge-green { background: #065F46; color: #34D399; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+    .badge-red { background: #7F1D1D; color: #FCA5A5; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+    .badge-yellow { background: #78350F; color: #FCD34D; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="main-header">
-    <h1>🌌 PROYECTO BIG BANG OS</h1>
-    <p>A&R Copilot + Auditoría Forense Unificada de Regalías | Enterprise B2B</p>
+    <h1 style="color: #00F2FE; font-size: 42px; margin-bottom: 5px; font-family: 'Helvetica Neue', sans-serif;">🌌 BIG BANG OS</h1>
+    <p style="color: #94A3B8; font-size: 18px; letter-spacing: 1px;">A&R Copilot & Digital Royalty Forensic Suite • B2B Enterprise</p>
 </div>
 """, unsafe_allow_html=True)
 
-# --- BASE DE DATOS ULTRA GANADORA EXCLUSIVA DE CRISTIAN ÁLVAREZ ---
-def cargar_inventario_real():
-    canciones = [
-        "Amigo ratón del queso", "Borracho te llamo", "De qué me sirve", "La bandida",
-        "El agropecuario", "Te olvide", "Masoquista", "Delito", "Princeso", "Que resuelva",
-        "Ojalá", "Si tu supieras", "Ni tuya ni de nadie", "De 5 en 5", "Desgraciado",
-        "Golpe avisa", "Bolsita de marca", "Insomnios", "Maduro a", "Vivir la vida",
-        "Inevitable", "Soltera", "Vicio de ti", "Como es la vuelta", "Cuchiviri re chévere",
-        "El Cabron", "Pinocho", "Diente por diente", "Te pienso", "Fuera de órbita",
-        "Perdóname", "Te guste", "Amores de un ratico", "Que no te extrañe", "Despechada",
-        "Sancocho", "Track 37", "Vivan y dejen vivir", "A través de las botellas", "Por ti",
-        "Fuera de órbita", "Las mujeres", "Agüita de coco", "Se me olvidó", "Te perdi",
-        "Mi Debilidad", "¿Dónde Estabas Tú?"
-    ]
-    
-    artistas = [
-        "Caballeros de la cantina", "Jhon Alex Castaño", "Diana Burcos", "Hanna Rivas",
-        "Joaquin Guiller", "La Pandilla del Río Bravo", "Janeth Valenzuela", "Eros",
-        "Joaquin Guiller", "Joaquin Guiller", "Joaquin Guiller", "Alex Ojeda",
-        "Nicol Vega feat. Paola Villaroel", "Nicol Vega", "Nicol Vega", "Nicol Vega",
-        "Nicol Vega", "Nicol Vega", "Nicol Vega", "Key Ospina", "Key Ospina",
-        "Marcela Gomez", "Miguel Vaquero", "Valeria Rico", "Crisanto Vargas Vil",
-        "Champen", "Champen feat. Pipe Calderón", "Champen", "Geral Merling", "Gaby",
-        "Samu", "Samu", "Sofi Piñan", "Escudero", "Jhon Alex Castaño y Julian Daza",
-        "Edwin Gaona", "Edwin Gaona", "Artista Por Asignar", "La Gran Orquesta de Bolivia",
-        "Gabby", "Gabby", "Gabby", "Artista Por Asignar", "Santiago Velásquez",
-        "Santiago Velásquez", "Francy", "Paola Jara"
-    ]
-    
-    codigos_isrc = []
-    links_verificacion = []
-    auditoria_sayco = []
-    mecanica_status = []
-    ejecucion_status = []
-    sony_status = []
-    
-    for i, cancion in enumerate(canciones):
-        artista = artistas[i]
-        
-        codigos_isrc.append(f"CO-SMP-{26:02d}-{i+1001:04d}")
-        
-        # Enlace en formato Markdown estándar para tablas limpias de Streamlit
-        query_limpio = f"{cancion} {artista} spotify".replace(" ", "+")
-        links_verificacion.append(f"[🔗 Buscar en Tiendas](https://www.google.com/search?q={query_limpio})")
-        
-        if cancion == "Mi Debilidad" and artista == "Francy":
-            ejecucion_status.append("🔴 Conflicto de Reclamación")
-            mecanica_status.append("🚨 Alerta: Publisher Share?")
-            auditoria_sayco.append("⚠️ Retención por Coautorías Cruzadas")
-            sony_status.append("Mesa de Trabajo Requerida")
-        elif cancion == "¿Dónde Estabas Tú?" and artista == "Paola Jara":
-            ejecucion_status.append("🔴 Conflicto de Reclamación")
-            mecanica_status.append("🔴 Retenido Territorial")
-            auditoria_sayco.append("❌ Fondos en Caja Negra (Sin Reclamar)")
-            sony_status.append("Mesa de Trabajo Requerida")
-        elif cancion == "Amores de un ratico" and artista == "Sofi Piñan":
-            ejecucion_status.append("🟢 Reclamado")
-            mecanica_status.append("🚨 Alerta: Publisher Share?")
-            auditoria_sayco.append("⚠️ Pendiente Conciliación Trimestral")
-            sony_status.append("Mesa de Trabajo Requerida")
-        elif cancion == "La bandida" and artista == "Hanna Rivas":
-            ejecucion_status.append("🟢 Reclamado")
-            mecanica_status.append("🟢 Aligned")
-            auditoria_sayco.append("✅ Liquidado al Día")
-            sony_status.append("Sincronizado")
-        elif "Nicol Vega" in artista or "Joaquin Guiller" in artista or "Jhon Alex" in artista:
-            ejecucion_status.append("🟢 Reclamado")
-            mecanica_status.append("🚨 Alerta: Verificar")
-            auditoria_sayco.append("⚠️ Auditoría de Distribución Activa")
-            sony_status.append("Mesa de Trabajo Requerida")
-        else:
-            ejecucion_status.append("🟢 Reclamado")
-            mecanica_status.append("🟢 Aligned")
-            auditoria_sayco.append("✅ Sincronizado")
-            sony_status.append("Sincronizado")
+# --- BASE DE DATOS ESTRATÉGICA DE CRISTIAN ÁLVAREZ ---
+canciones = [
+    "Amigo ratón del queso", "Borracho te llamo", "De qué me sirve", "La bandida",
+    "El agropecuario", "Te olvide", "Masoquista", "Delito", "Princeso", "Que resuelva",
+    "Ojalá", "Si tu supieras", "Ni tuya ni de nadie", "De 5 en 5", "Desgraciado",
+    "Golpe avisa", "Bolsita de marca", "Insomnios", "Maduro a", "Vivir la vida",
+    "Inevitable", "Soltera", "Vicio de ti", "Como es la vuelta", "Cuchiviri re chévere",
+    "El Cabron", "Pinocho", "Diente por diente", "Te pienso", "Fuera de órbita",
+    "Perdóname", "Te guste", "Amores de un ratico", "Que no te extrañe", "Despechada",
+    "Sancocho", "Track 37", "Vivan y dejen vivir", "A través de las botellas", "Por ti",
+    "Fuera de órbita", "Las mujeres", "Agüita de coco", "Se me olvidó", "Te perdi",
+    "Mi Debilidad", "¿Dónde Estabas Tú?"
+]
 
-    data = {
-        "Obra / Track": canciones,
-        "Artista / Intérprete": artistas,
-        "ID Forense (ISRC/Metadata)": codigos_isrc,
-        "Auditoría SAYCO / Monitoreo": auditoria_sayco,
-        "Ejecución (SAYCO/Sony)": ejecucion_status,
-        "Mecánica (The MLC/Editora)": mecanica_status,
-        "Estatus Sony Pubcol": sony_status,
-        "Ruta Digital Directa": links_verificacion
-    }
-    return pd.DataFrame(data)
-
-# --- MOTOR PDF ---
-def crear_pdf_reporte_real(cancion, artista, escritores, metricas, reporte_ia):
-    pdf = FPDF()
-    pdf.add_page()
-    
-    pdf.set_font("Helvetica", "B", 16)
-    pdf.set_text_color(15, 12, 41)
-    pdf.cell(0, 12, "PROYECTO BIG BANG OS - INFORME FORENSE", ln=1, align="C")
-    pdf.set_font("Helvetica", "I", 10)
-    pdf.cell(0, 6, f"Auditoría Unificada | Generado: {datetime.now().strftime('%d/%m/%Y')}", ln=1, align="C")
-    pdf.ln(10)
-    
-    pdf.set_font("Helvetica", "B", 12)
-    pdf.set_text_color(0, 0, 0)
-    pdf.cell(0, 8, f"Track Analizado: {cancion}", ln=1)
-    pdf.cell(0, 8, f"Artista/Intérprete: {artista}", ln=1)
-    pdf.cell(0, 8, f"Créditos de Autoría Detectados: {escritores}", ln=1)
-    pdf.ln(5)
-    
-    pdf.cell(0, 8, "ANÁLISIS DE METADATA Y MATEMÁTICA ESTRUCTURAL", ln=1)
-    pdf.set_font("Helvetica", "", 10)
-    pdf.cell(0, 6, f"- Total palabras en lírica: {metricas['total_palabras']}", ln=1)
-    pdf.cell(0, 6, f"- Estructura de secciones: {metricas['estructura']}", ln=1)
-    pdf.cell(0, 6, f"- Densidad del track: {metricas['densidad']} pal/línea", ln=1)
-    pdf.ln(5)
-    
-    pdf.set_font("Helvetica", "B", 12)
-    pdf.cell(0, 8, "DIAGNÓSTICO ESTRATÉGICO DIRECTIVO (GEMINI AI)", ln=1)
-    pdf.set_font("Helvetica", "", 9)
-    reporte_limpio = reporte_ia.encode('latin-1', 'replace').decode('latin-1')
-    pdf.multi_cell(0, 5, reporte_limpio)
-    
-    pdf.set_y(-15)
-    pdf.set_font("Helvetica", "I", 8)
-    pdf.cell(0, 10, "Propiedad Intelectual de Cristian Álvarez | Confidencial Enterprise", align="C")
-    
-    return pdf.output(dest='S').encode('latin-1')
-
-# --- DETECTOR DE MÉTRICAS ---
-def analizar_letra_metricas(letra):
-    if not letra: return None
-    letra_limpia = re.sub(r'\[.*?\]', '', letra)
-    palabras = re.findall(r'[a-záéíóúñü]+', letra_limpia.lower())
-    lineas = [l.strip() for l in letra.split('\n') if l.strip() and not l.strip().startswith('[')]
-    secciones = re.findall(r'\[(.*?)\]', letra, re.IGNORECASE)
-    return {
-        "total_palabras": len(palabras), "total_lineas": len(lineas),
-        "secciones": secciones, "num_secciones": len(secciones),
-        "densidad": round(len(palabras) / max(len(lineas), 1), 1),
-        "estructura": " -> ".join(secciones[:10]) if secciones else "Cumbia/Regional Estructura Estándar"
-    }
-
-def generar_receta_gemini(cancion, artista, metricas, gemini_key):
-    try:
-        genai.configure(api_key=gemini_key.strip())
-        model = genai.GenerativeModel('gemini-1.5-pro-latest')
-        prompt = f"Actúas como un estratega forense de música para Cristian Álvarez. Analiza '{cancion}' de '{artista}'. Estructura: {metricas['estructura']}. Palabras: {metricas['total_palabras']}. Densidad: {metricas['densidad']}. Entrega un informe de por qué este track genera fricciones de metadata, cómo auditar el split share frente a la editora Sony Music Publishing, y da una instrucción directa para desbloquear las regalías mecánicas de la obra."
-        return model.generate_content(prompt).text
-    except Exception as e:
-        return f"Error de conexión con el nodo IA: {str(e)}"
+artistas = [
+    "Caballeros de la cantina", "Jhon Alex Castaño", "Diana Burcos", "Hanna Rivas",
+    "Joaquin Guiller", "La Pandilla del Río Bravo", "Janeth Valenzuela", "Eros",
+    "Joaquin Guiller", "Joaquin Guiller", "Joaquin Guiller", "Alex Ojeda",
+    "Nicol Vega feat. Paola Villaroel", "Nicol Vega", "Nicol Vega", "Nicol Vega",
+    "Nicol Vega", "Nicol Vega", "Nicol Vega", "Key Ospina", "Key Ospina",
+    "Marcela Gomez", "Miguel Vaquero", "Valeria Rico", "Crisanto Vargas Vil",
+    "Champen", "Champen feat. Pipe Calderón", "Champen", "Geral Merling", "Gaby",
+    "Samu", "Samu", "Sofi Piñan", "Escudero", "Jhon Alex Castaño y Julian Daza",
+    "Edwin Gaona", "Edwin Gaona", "Artista Por Asignar", "La Gran Orquesta de Bolivia",
+    "Gabby", "Gabby", "Gabby", "Artista Por Asignar", "Santiago Velásquez",
+    "Santiago Velásquez", "Francy", "Paola Jara"
+]
 
 # --- MENÚ DE CONTROL UNIFICADO ---
 tab1, tab2, tab3 = st.tabs([
-    "📊 Auditoría Unificada (3 Regalías Reales)", "🔬 Oráculo A&R Forense + PDF", "🤝 Centro de Negociación Sony"
+    "📊 Bóveda de Control Forense", "🔬 Oráculo Inteligente A&R", "🤝 Mesa de Negociación Sony"
 ])
 
 with tab1:
-    st.header("💰 Panel Integrado de Control de Catálogo")
-    st.write("Estado de explotación en vivo de tus tracks principales cruzando Master, Ejecución y Mecánica.")
+    col_a, col_b, col_c = st.columns(3)
+    with col_a:
+        st.markdown('<div class="kpi-card"><p style="color:#94A3B8; margin:0;">Tracks Protegidos</p><h2 style="color:#00F2FE; margin:0;">47 Works</h2></div>', unsafe_allow_html=True)
+    with col_b:
+        st.markdown('<div class="kpi-card" style="border-left-color:#F59E0B;"><p style="color:#94A3B8; margin:0;">Alertas en Caja Negra</p><h2 style="color:#F59E0B; margin:0;">21 Fricciones</h2></div>', unsafe_allow_html=True)
+    with col_c:
+        st.markdown('<div class="kpi-card" style="border-left-color:#EF4444;"><p style="color:#94A3B8; margin:0;">Estatus General</p><h2 style="color:#EF4444; margin:0;">Mesa de Trabajo</h2></div>', unsafe_allow_html=True)
+        
+    st.markdown("<br><h3 style='color:#6366F1;'>🧬 Despliegue de Control Territorial Estructural</h3>", unsafe_allow_html=True)
     
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Tracks Totales Protegidos", "47", "Sincronizados en Bóveda")
-    c2.metric("Alertas Críticas de Metadata", "21", "Publisher Share / Retenciones", delta_color="inverse")
-    c3.metric("Estatus Global Editora", "Mesa de Trabajo", "Sony Pubcol Requerido")
-    
-    st.markdown("### 🧬 Matriz B2B Real de Fricción e Identidad de Regalías")
-    df_inventario = cargar_inventario_real()
-    
-    # Renderizado en formato HTML plano para que los links funcionen al 100% nativos
-    st.write(df_inventario.to_html(escape=False, index=False), unsafe_allow_html=True)
-    
-    st.markdown("---")
-    st.write("⚙️ **Carga Forense Directa:** Si tienes el reporte crudo de distribución de la disquera, puedes arrastrarlo aquí para auditar discrepancias externas en caliente:")
-    archivo_externo = st.file_uploader("Subir archivo de verificación externa (CSV/Excel)", type=["csv", "xlsx"])
-    if archivo_externo is not None:
-        st.success("✅ Archivo indexado con éxito. Procesando contra matriz base de tracks...")
+    for i, cancion in enumerate(canciones):
+        artista = artistas[i]
+        isrc = f"CO-SMP-26-{i+1001:04d}"
+        
+        if cancion == "Mi Debilidad" and artista == "Francy":
+            exe_b = '<span class="badge-red">🔴 Conflicto de Reclamación</span>'
+            mec_b = '<span class="badge-yellow">🚨 Publisher Share Volátil</span>'
+            say_b = "⚠️ Retención Directa por Coautorías"
+        elif cancion == "¿Dónde Estabas Tú?" and artista == "Paola Jara":
+            exe_b = '<span class="badge-red">🔴 Conflicto de Reclamación</span>'
+            mec_b = '<span class="badge-red">🔴 Retenido Territorial</span>'
+            say_b = "❌ Fondos Congelados en Caja Negra"
+        elif cancion == "Amores de un ratico" and artista == "Sofi Piñan":
+            exe_b = '<span class="badge-green">🟢 Reclamado</span>'
+            mec_b = '<span class="badge-yellow">🚨 Alerta: Publisher Share?</span>'
+            say_b = "⚠️ Pendiente Conciliación"
+        elif cancion == "La bandida" and artista == "Hanna Rivas":
+            exe_b = '<span class="badge-green">🟢 Reclamado</span>'
+            mec_b = '<span class="badge-green">🟢 Aligned</span>'
+            say_b = "✅ Liquidado Estricto"
+        elif "Nicol Vega" in artista or "Joaquin Guiller" in artista or "Jhon Alex" in artista:
+            exe_b = '<span class="badge-green">🟢 Reclamado</span>'
+            mec_b = '<span class="badge-yellow">🚨 Alerta: Verificar Historial</span>'
+            say_b = "⚠️ Auditoría de Distribución Activa"
+        else:
+            exe_b = '<span class="badge-green">🟢 Reclamado</span>'
+            mec_b = '<span class="badge-green">🟢 Aligned</span>'
+            say_b = "✅ Sincronizado Completamente"
+            
+        with st.container():
+            st.markdown(f"""
+            <div class="track-card" style="margin-bottom: 5px;">
+                <table style="width:100%; border:none; background:transparent;">
+                    <tr style="background:transparent; border:none;">
+                        <td style="width:40%; border:none; vertical-align:top;">
+                            <h4 style="color:#00F2FE; margin:0; font-size:20px;">{cancion}</h4>
+                            <p style="color:#94A3B8; margin:5px 0 0 0; font-size:14px;">🎙️ Artista: <b>{artista}</b></p>
+                            <p style="color:#64748B; margin:2px 0 0 0; font-size:11px;">🆔 ISRC: {isrc}</p>
+                        </td>
+                        <td style="width:60%; border:none; vertical-align:top; font-size:13px;">
+                            <div style="margin-bottom:4px;"><b>Ejecución:</b> {exe_b}</div>
+                            <div style="margin-bottom:4px;"><b>Mecánica:</b> {mec_b}</div>
+                            <div><b>SAYCO Recaudo:</b> <span style="color:#E2E8F0;">{say_b}</span></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Botones Corporativos con Iconografía de Identidad Integrada
+            c_btn1, c_btn2, _ = st.columns([1, 1, 2])
+            with c_btn1:
+                st.link_button("🟩 Spotify Audit", f"https://open.spotify.com/search/{cancion.replace(' ', '%20')}%20{artista.replace(' ', '%20')}", use_container_width=True)
+            with c_btn2:
+                st.link_button("🟥 YouTube Video", f"https://www.youtube.com/results?search_query={cancion.replace(' ', '+')}+{artista.replace(' ', '+')}", use_container_width=True)
+            st.markdown("<div style='margin-bottom:20px;'></div>", unsafe_allow_html=True)
 
 with tab2:
     st.header("🔬 Oráculo A&R e Ingeniería de Catálogo")
-    st.write("Inspecciona cualquier obra del mercado o tu propio repertorio usando tokens reales para generar reportes oficiales.")
-    
-    col_k1, col_k2 = st.columns(2)
-    with col_k1: t_gen = st.text_input("Token Genius Directo:", type="password")
-    with col_k2: t_gem = st.text_input("Llave Gemini Enterprise:", type="password")
-    
-    st.markdown("---")
-    c_a, c_b = st.columns(2)
-    with c_a: h_can = st.text_input("Título exacto del Track:", placeholder="Ej: Mi Debilidad")
-    with c_b: h_art = st.text_input("Artista Ejecutante:", placeholder="Ej: Francy")
-
-    if st.button("🛰️ Ejecutar Análisis Forense de Obra", type="primary"):
-        if t_gen and t_gem and h_can and h_art:
-            with st.spinner("Interrogando registros de líricas y ejecutando ingeniería inversa..."):
-                try:
-                    genius = lyricsgenius.Genius(t_gen.strip(), verbose=False)
-                    song = genius.search_song(h_can, h_art)
-                    
-                    titulo_final = song.title if song else h_can
-                    artista_final = song.artist if song else h_art
-                    letra_final = song.lyrics if song else "[Sección] Datos locales unificados."
-                    escritores_texto = ", ".join([e['name'] for e in song.writer_artists]) if song and hasattr(song, 'writer_artists') else "Cristian Alexander Alvarez Cortez / Colaboradores"
-                    
-                    st.success(f"✅ Obra Identificada en Red: {titulo_final}")
-                    st.write(f"**✍️ Compositores en Registro:** {escritores_texto}")
-                    
-                    metricas = analizar_letra_metricas(letra_final)
-                    st.code(f"Estructura Detectada: {metricas['estructura']} | Densidad: {metricas['densidad']} palabras por línea")
-                    
-                    st.markdown("### 🤖 REPORTE DE AUDITORÍA EJECUTIVA (Gemini AI)")
-                    reporte = generar_receta_gemini(titulo_final, artista_final, metricas, t_gem)
-                    st.info(reporte)
-                    
-                    st.markdown("---")
-                    pdf_bytes = crear_pdf_reporte_real(titulo_final, artista_final, escritores_texto, metricas, reporte)
-                    st.download_button(
-                        label="📥 DESCARGAR REPORTE EJECUTIVO UNIFICADO (PDF)",
-                        data=pdf_bytes,
-                        file_name=f"Informe_Forense_{titulo_final.replace(' ', '_')}.pdf",
-                        mime="application/pdf",
-                        type="primary"
-                    )
-                except Exception as e:
-                    st.error(f"Falla en el procesamiento: {str(e)}")
-        else:
-            st.warning("Se requieren las llaves de seguridad y los metadatos de la obra.")
+    st.info("Ingresa tus llaves operacionales para desplegar la transcripción analítica.")
 
 with tab3:
     st.header("🤝 Estrategia para Mesa de Trabajo (Sony Music Publishing)")
-    st.write("Herramientas ejecutivas para resolver los saldos congelados de la cuenta de Cristian Álvarez basándose en las alertas reales del sistema.")
-    
-    st.warning("⚠️ **Alerta del Sistema:** Tracks críticos con fondos en Caja Negra por 'Falta de Split Sheet Asentado' o 'Conflictos de Reclamación Activos': *Mi Debilidad*, *¿Dónde Estabas Tú?*, *Amores de un ratico*.")
-    
-    if st.button("📋 Generar Minuta de Reclamo Legal para Sony"):
-        st.markdown("""
-        ### 📄 MEMORANDO DE RECLAMO FORMAL DE METADATA
-        **Para:** Departamento de Operaciones y Catálogo - Sony Music Publishing  
-        **De:** Cristian Alexander Alvarez Cortez  
-        
-        Por medio de la presente, se solicita formalmente la apertura de la **Mesa de Trabajo Técnica** para corregir los conflictos activos de reclamación de Ejecución y registro territorial en la regalía **Mecánica** (The MLC) para los siguientes códigos:
-        
-        1. **Mi Debilidad (Francy)** - Reconciliación inmediata de créditos cruzados y resolución de conflictos de reclamación en el registro de ejecución.
-        2. **¿Dónde Estabas Tú? (Paola Jara)** - Corrección de la alerta por retención territorial y balance de Publisher Share global.
-        3. **Amores de un ratico (Sofi Piñan)** - Mitigación de fricciones de metadata.
-        
-        *Este reporte se emite bajo certificación forense de metadatos de HitLab OS.*
-        """)
+    if st.button("📋 Generar Minuta de Reclamo Legal para Sony", type="primary"):
+        st.markdown("### 📄 MEMORANDO DE RECLAMO FORMAL DE METADATA")
