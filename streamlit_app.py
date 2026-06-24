@@ -76,9 +76,9 @@ def cargar_inventario_real():
         # Generación de códigos e identificadores simulados en base al catálogo real
         codigos_isrc.append(f"CO-SMP-{26:02d}-{i+1001:04d}")
         
-        # Rutas de enlaces de búsqueda limpia automatizadas
-        query_limpio = f"{cancion} {artista}".replace(" ", "+")
-        links_verificacion.append(f"🔍 https://open.spotify.com/search/{query_limpio}")
+        # Enlace de búsqueda directa en Google (apunta a Spotify/YouTube de forma interactiva)
+        query_limpio = f"{cancion} {artista} spotify".replace(" ", "+")
+        links_verificacion.append(f"https://www.google.com/search?q={query_limpio}")
         
         # Configuración analítica basada en tus especificaciones precisas
         if cancion == "Mi Debilidad" and artista == "Francy":
@@ -120,7 +120,7 @@ def cargar_inventario_real():
         "Ejecución (SAYCO/Sony)": ejecucion_status,
         "Mecánica (The MLC/Editora)": mecanica_status,
         "Estatus Sony Pubcol": sony_status,
-        "Ruta Digital (Spotify/YT/Tiendas)": links_verificacion
+        "Ruta Digital (Clic para Ver)": links_verificacion
     }
     return pd.DataFrame(data)
 
@@ -202,7 +202,22 @@ with tab1:
     st.markdown("### 🧬 Matriz B2B Real de Fricción e Identidad de Regalías")
     df_inventario = cargar_inventario_real()
     
-    st.dataframe(df_inventario, use_container_width=True, height=900)
+    # AQUÍ ACTIVAMOS LA CONFIGURACIÓN DE ENLACES CLIQUEABLES DIRECTOS
+    st.data_editor(
+        df_inventario, 
+        use_container_width=True, 
+        height=900,
+        column_config={
+            "Ruta Digital (Clic para Ver)": st.column_config.LinkColumn(
+                "Ruta Digital (Clic para Ver)",
+                help="Haz clic directo para verificar metadatos en las tiendas",
+                validate="^http",
+                max_chars=100,
+                display_text="🌐 Abrir Verificación"
+            )
+        },
+        disabled=True
+    )
     
     st.markdown("---")
     st.write("⚙️ **Carga Forense Directa:** Si tienes el reporte crudo de distribución de la disquera, puedes arrastrarlo aquí para auditar discrepancias externas en caliente:")
